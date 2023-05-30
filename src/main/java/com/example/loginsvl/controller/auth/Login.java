@@ -1,4 +1,10 @@
-package com.example.loginsvl;
+package com.example.loginsvl.controller.auth;
+
+import com.example.loginsvl.dao.Impl.UserDaoImpl;
+import com.example.loginsvl.dao.UserDao;
+import com.example.loginsvl.entity.User;
+import com.example.loginsvl.exception.UncheckedException;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,8 +16,7 @@ import java.io.IOException;
 
 @WebServlet(name = "login",value = "/login")
 public class Login  extends HttpServlet {
-    private static  final String user= "admin";
-    private static final String pass= "123";
+    UserDao userDao = new UserDaoImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -23,12 +28,18 @@ public class Login  extends HttpServlet {
         try {
             String username= req.getParameter("username");
             String password= req.getParameter("password");
-            if(username.equals(user)&& password.equals(pass)){
+            User user = userDao.findByUserName(username);
+            boolean check = BCrypt.checkpw(password,user.getPassword());
+            if(check == true){
                 HttpSession session = req.getSession();
                 session.setAttribute("user",username);
-                resp.sendRedirect("index.jsp");
+                req.removeAttribute("fail");
+                req.getRequestDispatcher("index.jsp").forward(req,resp);
+            }else {
+                req.setAttribute("fail", "Username or password invalid!!!");
+                req.getRequestDispatcher("login.jsp").forward(req, resp);
             }
-        }catch (Exception e){
+        }catch (UncheckedException e){
             log(e.getMessage());
         }
     }

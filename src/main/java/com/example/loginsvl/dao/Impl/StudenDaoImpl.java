@@ -1,5 +1,6 @@
-package com.example.loginsvl.dao;
+package com.example.loginsvl.dao.Impl;
 
+import com.example.loginsvl.dao.StudentDao;
 import com.example.loginsvl.entity.Student;
 import com.example.loginsvl.exception.UncheckedException;
 import com.example.loginsvl.utils.HibernateUtils;
@@ -8,7 +9,8 @@ import org.hibernate.Session;
 import java.util.List;
 import java.util.Queue;
 
-public class StudenDaoImpl implements StudentDao{
+public class StudenDaoImpl implements
+    StudentDao {
     Session session;
 
 
